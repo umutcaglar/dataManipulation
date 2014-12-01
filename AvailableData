@@ -1,0 +1,12 @@
+find -name "*.fastq.gz"
+find -name "*_counts_normalized.txt"
+find -name "*.mzXML"
+find -name "*REL606_psms.txt"
+find -name "*protein_counts.csv"
+find -name "*.CDF"
+find -name "*.FF"
+find -name "*.xlsx"
+find -name "*.pptx"
+find -name "*.txt"
+
+

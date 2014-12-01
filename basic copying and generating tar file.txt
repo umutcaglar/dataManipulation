@@ -1,0 +1,1 @@
+tar -cvf hydra_data_structure.tar ../../../../../corral-repl/utexas/A-bio7/AG3C/backup/data/experiments/glucose_time_course/sample*/RNA/

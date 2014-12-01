@@ -1,0 +1,62 @@
+## My code Basic steps.
+
+# Copying files from lonestar backup
+
+# a) zip and send to cds
+tar -cvf hydra_data_structure.tar ../../../../../corral-repl/utexas/A-bio7/AG3C/backup/data/experiments/glucose_time_course/sample*/RNA/
+# b) unzip
+tar -xvf hydra_data_structure.tar
+
+mv data/corral_repl/utexas/A-bio7/AG3C/backup/data/experiments/*.* data/
+# get rid of additional folders by using FZ
+
+# get rid of processed data and non depleted data (we do not need them)
+tacc:/scratch/03221/ucaglar/data$ rm -rf glucose_time_course/samp*/RNA/*.processed
+tacc:/scratch/03221/ucaglar/data$ rm -rf glucose_time_course/samp*/RNA/non_*.*
+
+
+# focus on sample99
+cd sample99
+
+move sample99 from raw to processed
+
+mkdir data/glucose_time_course/sample99/RNA/depleted.processed/
+cp data/glucose_time_course/sample99/RNA/depleted.raw/*.* data/glucose_time_course/sample99/RNA/depleted.processed/
+gunzip data/glucose_time_course/sample99/RNA/depleted.processed/*.*
+
+cat data/glucose_time_course/sample99/RNA/depleted.processed/*R1* > data/glucose_time_course/sample99/RNA/depleted.processed/MURI_99_SA14008_TGACCA_L005_L006_R1_001.fastq
+cat data/glucose_time_course/sample99/RNA/depleted.processed/*R2* > data/glucose_time_course/sample99/RNA/depleted.processed/MURI_99_SA14008_TGACCA_L005_L006_R2_001.fastq
+
+remove pr
+
+
+
+
+
+
+# generate a folder for analyse under sample99/RNA/
+mkdir depleted.processed2/
+cp depleted.raw/*.* depleted.processed2/
+
+Now I have 4 files under depleted.processed2
+	MURI_99_SA14008_TGACCA_L005_R1_001.fastq.gz
+	MURI_99_SA14008_TGACCA_L005_R2_001.fastq.gz
+	MURI_99_SA14008_TGACCA_L006_R1_001.fastq.gz
+	MURI_99_SA14008_TGACCA_L006_R2_001.fastq.gz
+
+this files are zipped with gzip. to unzip them one can use gunzip command (g-un-zip)
+	gunzip MURI_99_SA14008_TGACCA_L005_R1_001.fastq.gz 
+	gunzip MURI_99_SA14008_TGACCA_L005_R2_001.fastq.gz
+	gunzip MURI_99_SA14008_TGACCA_L006_R1_001.fastq.gz 
+	gunzip MURI_99_SA14008_TGACCA_L006_R1_002.fastq.gz
+	
+the end up files are same files without gz 
+	MURI_99_SA14008_TGACCA_L005_R1_001.fastq
+	MURI_99_SA14008_TGACCA_L005_R2_001.fastq
+	MURI_99_SA14008_TGACCA_L006_R1_001.fastq
+	MURI_99_SA14008_TGACCA_L006_R2_001.fastq 
+	
+next step is to combine files under r1 and r2 tags. For this I use cat function
+	cat *R1* > MURI_99_SA14008_TGACCA_L005_L006_R1_001.fastq
+	cat *R2* > MURI_99_SA14008_TGACCA_L005_L006_R2_001.fastq
+

@@ -1,0 +1,16 @@
+#!/bin/bash       
+#$ -V            # I don't remember                         
+#$ -cwd           # Means job will be run in the current working directory
+#$ -A A-bio7      # Claus' allocation on TACC
+#$ -N inerestingThingsGoingOn               # job name
+#$ -o $JOB_NAME.o$JOB_ID        # stdout file
+#$ -e $JOB_NAME.e$JOB_ID        # stderr file
+#$ -pe 12way 24               # cores
+#$ -q normal                  # normal queue ( we are not employees of TACC)
+#$ -l h_rt=24:00:00      # max runtime is 24 hrs. this is the most we are allowed :(
+#$ -M stephanie.spielman@gmail.com # email me!
+#$ -m e  # Email at Begin and End of job # email me settings!
+
+# Here, I am specifying a working directory where I want it all to happen!
+
+bash write_paramlist_bowtie.sh
