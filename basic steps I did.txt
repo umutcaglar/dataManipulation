@@ -14,49 +14,69 @@ mv data/corral_repl/utexas/A-bio7/AG3C/backup/data/experiments/*.* data/
 tacc:/scratch/03221/ucaglar/data$ rm -rf glucose_time_course/samp*/RNA/*.processed
 tacc:/scratch/03221/ucaglar/data$ rm -rf glucose_time_course/samp*/RNA/non_*.*
 
+so at this point I have a file that looks like original data set with only raw RNA data.
+data is under $SCRATCH/data
+it might look like 
+/scratch/03221/ucaglar/data/glucose_time_course/sample100/RNA/depleted.raw/
+the code is under $HOME/Ecoli_RNAseq
+I add a folder under $SCRATCH/data named runningCenter I run all commands from there which causes all .e .o .pe files appear under there which prevents mess
 
-# focus on sample99
-cd sample99
+to be able to run flexbar
+you should download the flexbar also
+note flexbar ver 2.31 works fine on the other hand ver 2.5 does not work
+ 
+the next step is to generate the file list for combining all the data files under processed folder
 
-move sample99 from raw to processed
+for this we need a list of files that incldes list of all the files that needs to be combined.
 
-mkdir data/glucose_time_course/sample99/RNA/depleted.processed/
-cp data/glucose_time_course/sample99/RNA/depleted.raw/*.* data/glucose_time_course/sample99/RNA/depleted.processed/
-gunzip data/glucose_time_course/sample99/RNA/depleted.processed/*.*
+go to home directory
+cd $HOME/Ecoli_RNAseq/src
+be sure that write_paramlist_concatenate02.sh have the permission to run; if so then run it; type 
+./write_paramlist_concatenate02.sh
 
-cat data/glucose_time_course/sample99/RNA/depleted.processed/*R1* > data/glucose_time_course/sample99/RNA/depleted.processed/MURI_99_SA14008_TGACCA_L005_L006_R1_001.fastq
-cat data/glucose_time_course/sample99/RNA/depleted.processed/*R2* > data/glucose_time_course/sample99/RNA/depleted.processed/MURI_99_SA14008_TGACCA_L005_L006_R2_001.fastq
+if everything goes well you should see numbers from 1 .. something
+then it should generate a file named "paramlist_concatenate" under $SCRATCH/data that looks like
 
-remove pr
+...
+python /home1/03221/ucaglar/Ecoli_RNAseq/src/concatenate_reads.py /scratch/03221/ucaglar/data/glucose_time_course/sample100/RNA/depleted.raw/
+python /home1/03221/ucaglar/Ecoli_RNAseq/src/concatenate_reads.py /scratch/03221/ucaglar/data/glucose_time_course/sample101/RNA/depleted.raw/
+python /home1/03221/ucaglar/Ecoli_RNAseq/src/concatenate_reads.py /scratch/03221/ucaglar/data/glucose_time_course/sample102/RNA/depleted.raw/
+...
 
+then go to running center
+cd /scratch/03221/ucaglar/data/runningCenter/
+and run "concatenate_launcher.sge"
+qsub /home1/03221/ucaglar/Ecoli_RNAseq/job_submissions_files/concatenate_launcher.sge 
 
+if everything goes well you should generate *.processed folders under samples that includes files named
 
+MURI_99_SA14008_TGACCA_L005+L006_001_R1.fastq
+MURI_99_SA14008_TGACCA_L005+L006_001_R2.fastq
 
+then the next step is to run the "write_paramlist_bowtie.sh" under $HOME/Ecoli_RNAseq/src
+cd $HOME/Ecoli_RNAseq/src
+./write_paramlist_bowtie.sh
 
+if everything goes well you should see numbers from 1 to n
+then a file named "paramlist_bowtie_glucose_time_course" should be generated under
+$SCRATCH/data that looks like
 
-# generate a folder for analyse under sample99/RNA/
-mkdir depleted.processed2/
-cp depleted.raw/*.* depleted.processed2/
+...
+/home1/03221/ucaglar/Ecoli_RNAseq/src/bowtie_commands.sh /scratch/03221/ucaglar/data/glucose_time_course/sample100/RNA/depleted.processed/
+/home1/03221/ucaglar/Ecoli_RNAseq/src/bowtie_commands.sh /scratch/03221/ucaglar/data/glucose_time_course/sample101/RNA/depleted.processed/
+/home1/03221/ucaglar/Ecoli_RNAseq/src/bowtie_commands.sh /scratch/03221/ucaglar/data/glucose_time_course/sample102/RNA/depleted.processed/
+...
 
-Now I have 4 files under depleted.processed2
-	MURI_99_SA14008_TGACCA_L005_R1_001.fastq.gz
-	MURI_99_SA14008_TGACCA_L005_R2_001.fastq.gz
-	MURI_99_SA14008_TGACCA_L006_R1_001.fastq.gz
-	MURI_99_SA14008_TGACCA_L006_R2_001.fastq.gz
+type
+"module swap intel gcc"
+to be able to run flexbar
+you should download the flexbar also
+note flexbar ver 2.31 works fine on the other hand ver 2.5 does not work
 
-this files are zipped with gzip. to unzip them one can use gunzip command (g-un-zip)
-	gunzip MURI_99_SA14008_TGACCA_L005_R1_001.fastq.gz 
-	gunzip MURI_99_SA14008_TGACCA_L005_R2_001.fastq.gz
-	gunzip MURI_99_SA14008_TGACCA_L006_R1_001.fastq.gz 
-	gunzip MURI_99_SA14008_TGACCA_L006_R1_002.fastq.gz
-	
-the end up files are same files without gz 
-	MURI_99_SA14008_TGACCA_L005_R1_001.fastq
-	MURI_99_SA14008_TGACCA_L005_R2_001.fastq
-	MURI_99_SA14008_TGACCA_L006_R1_001.fastq
-	MURI_99_SA14008_TGACCA_L006_R2_001.fastq 
-	
-next step is to combine files under r1 and r2 tags. For this I use cat function
-	cat *R1* > MURI_99_SA14008_TGACCA_L005_L006_R1_001.fastq
-	cat *R2* > MURI_99_SA14008_TGACCA_L005_L006_R2_001.fastq
+be sure that 
+bowtie_launcher.sh is not in the test mode
 
+then go to running center 
+cd /scratch/03221/ucaglar/data/runningCenter/
+and run "bowtie_launcher.sge"
+qsub /home1/03221/ucaglar/Ecoli_RNAseq/job_submissions_files/bowtie_launcher.sge
